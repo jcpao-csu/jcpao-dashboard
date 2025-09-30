@@ -1,5 +1,10 @@
 # Blair's Law
 # Valentine's Law
+
+## Jazzlyn request from July 2025:
+I received the media request below on Valentine's Law (575.151), which increases penalties for fleeing from police during traffic stops. 
+Are you guys able to see how many of these have been charged since the law went into effect on Aug. 28, 2024? 
+
 # Homicides and Non-fatal shootings in Jackson County
 # 
 
