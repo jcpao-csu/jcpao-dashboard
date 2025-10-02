@@ -1,3 +1,10 @@
 
-dashboard-venv/
+# Files
 .DS_Store
+.env
+
+# Venv
+dashboard-venv/
+
+# Streamlit configuration
+.streamlit/
