@@ -304,12 +304,12 @@ with cases_by_agency:
 
     # Sort by Year ascending, then Case Status descending
     sorted_df = test_df.sort_values(by=["Case Status", "Total Cases"], ascending=[True, False])
-    cols = st.columns(4)
-    with cols[0]:
-        st.write(sorted_df[sorted_df['Case Status']=="Received"]['agency_name'].tolist())
-    with cols[1]:
-        st.write(sorted_df[sorted_df['Case Status']=="Filed"]['agency_name'].tolist())
-    with cols[2]:
-        st.write(sorted_df[sorted_df['Case Status']=="Not Filed"]['agency_name'].tolist())
-    with cols[3]:
-        st.write(sorted_df[sorted_df['Case Status']=="Disposed"]['agency_name'].tolist())
+    # cols = st.columns(4)
+    # with cols[0]:
+    #     st.write(sorted_df[sorted_df['Case Status']=="Received"]['agency_name'].tolist())
+    # with cols[1]:
+    #     st.write(sorted_df[sorted_df['Case Status']=="Filed"]['agency_name'].tolist())
+    # with cols[2]:
+    #     st.write(sorted_df[sorted_df['Case Status']=="Not Filed"]['agency_name'].tolist())
+    # with cols[3]:
+    #     st.write(sorted_df[sorted_df['Case Status']=="Disposed"]['agency_name'].tolist())
