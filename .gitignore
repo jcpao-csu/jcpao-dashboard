@@ -8,3 +8,6 @@ dashboard-venv/
 
 # Streamlit configuration
 .streamlit/
+
+# Docs folder
+docs/
