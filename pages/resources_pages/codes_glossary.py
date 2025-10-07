@@ -97,6 +97,6 @@ with st.sidebar:
 df = st.dataframe(
     data=st.session_state["codes_glossary"],
     width="stretch",
-    height="auto",
+    height=1000,
     hide_index=True,
 )

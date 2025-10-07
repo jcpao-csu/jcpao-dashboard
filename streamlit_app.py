@@ -38,7 +38,7 @@ pages = {
     #     st.Page("pages/violence_pages/shoot_review.py", title="Overview")
     # ],
     "Domestic Violence": [
-        st.Page("pages/dv_pages/dv_main.py", title="Overview"),
+        st.Page("dv_main.py", title="Overview"), # pages/dv_pages/
         st.Page("pages/dv_pages/dv_cases.py", title="Domestic Assault Cases")
     ],
     # "Other": [
