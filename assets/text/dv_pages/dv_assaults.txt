@@ -1,0 +1,40 @@
+## About the Data
+
+The state of Missouri recognizes *domestic assault* as a special set of criminal offenses within the state criminal charge code ([see here](https://www.mshp.dps.missouri.gov/CJ08Client/Home/ChargeCode)).
+While not all incidents of domestic violence always arise to the level of domestic assault, these legally recognized state offenses provide tools for our prosecuting attorneys to target domestic violence offenders and protect victims from further abuse.
+
+#### Domestic Assault offenses:
+
+* Domestic Assault, 1st degree ([565.072](https://revisor.mo.gov/main/OneSection.aspx?section=565.072) RSMo) - *attempts to kill or knowingly causes or attempts to cause serious physical injury to a domestic victim*
+* Domestic Assault, 2nd degree ([565.073](https://revisor.mo.gov/main/OneSection.aspx?section=565.073) RSMo) - 
+    * (1) *Knowingly causes physical injury to such domestic victim by any means, including but not limited to, use of a deadly weapon or dangerous instrument, or by choking or strangulation; or*
+    * (2) *Recklessly causes serious physical injury to such domestic victim; or*
+    * (3) *Recklessly causes physical injury to such domestic victim by means of any deadly weapon*
+* Domestic Assault, 3rd degree ([565.074](https://revisor.mo.gov/main/OneSection.aspx?section=565.074) RSMo) - *attempts to cause physical injury or knowingly causes physical pain or illness to a domestic victim*
+* Domestic Assault, 4th degree ([565.076](https://revisor.mo.gov/main/OneSection.aspx?section=565.076) RSMo) - 
+    * (1) *The person attempts to cause or recklessly causes physical injury, physical pain, or illness to such domestic victim;*
+    * (2) *With criminal negligence the person causes physical injury to such domestic victim by means of a deadly weapon or dangerous instrument;*
+    * (3) *The person purposely places such domestic victim in apprehension of immediate physical injury by any means;*
+    * (4) *The person recklessly engages in conduct which creates a substantial risk of death or serious physical injury to such domestic victim;*
+    * (5) *The person knowingly causes physical contact with such domestic victim knowing he or she will regard the contact as offensive; or*
+    * (6) *The person knowingly attempts to cause or causes the isolation of such domestic victim by unreasonably and substantially restricting or limiting his or her access to other persons, telecommunication devices or transportation for the purpose of isolation*
+
+#### Related Domestic Violence offenses:
+
+Below are other Missouri state offenses commonly associated with domestic violence.
+
+* Stalking, 1st degree ([565.225](https://revisor.mo.gov/main/OneSection.aspx?section=565.225) RSMo)
+* Stalking, 2nd degree ([565.227](https://revisor.mo.gov/main/OneSection.aspx?section=565.227) RSMo)
+* Harassment, 1st degree ([565.090](https://revisor.mo.gov/main/OneSection.aspx?section=565.090) RSMo)
+* Harassment, 2nd degree ([565.091](https://revisor.mo.gov/main/OneSection.aspx?section=565.091) RSMo)
+
+#### Legal defintions: 
+
+* **Domestic victim** ([565.002](https://revisor.mo.gov/main/OneSection.aspx?section=565.002) RSMo) - *a household or family member as the term 'family' or 'household member' is defined in section [455.010](https://revisor.mo.gov/main/OneSection.aspx?section=565.002), including any child who is a member of the household or family*
+* **Family or household member** ([455.010](https://revisor.mo.gov/main/OneSection.aspx?section=455.010) RSMo) - 
+    * *spouses,*
+    * *former spouses,* 
+    * *any person related by blood or marriage,* 
+    * *persons who are presently residing together or have resided together in the past,* 
+    * *any person who is or has been in a continuing social relationship of a romantic or intimate nature with the victim,* 
+    * *and anyone who has a child in common regardless of whether they have been married or have resided together at any time*
