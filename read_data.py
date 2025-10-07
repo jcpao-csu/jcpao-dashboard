@@ -58,8 +58,15 @@ def query_table(sql_query: str, _connection: ConnectionPool = db_connection) -> 
         st.error(f"Database query failed: {e}")
         return pd.DataFrame()
 
+# --- Filter FLD pbk_num from NTFLD df ---
+@st.cache_data
+def filter_ntfld(ntfld: pd.DataFrame, fld: pd.DataFrame) -> pd.DataFrame:
+    fld_cases = fld['pbk_num'].unique().tolist()
+    return ntfld[~ntfld['pbk_num'].isin(fld_cases)]
+
+
 # Query tables 
 RCVD = query_table("SELECT * FROM karpel_rcvd")
 FLD = query_table("SELECT * FROM karpel_fld")
-NTFLD = query_table("SELECT * FROM karpel_ntfld")
+NTFLD = filter_ntfld(query_table("SELECT * FROM karpel_ntfld"), FLD)
 DISP = query_table("SELECT * FROM karpel_disp")
