@@ -5,6 +5,7 @@ import altair as alt
 
 from read_data import query_table
 from read_data import RCVD, FLD, NTFLD, DISP
+from session_state import initial_session_state, pages_session_state, initiate_widgets
 
 # --- Streamlit page title ---
 
@@ -12,65 +13,26 @@ st.markdown("<h1 style='text-align: center;'>JCPAO Dashboard Overview</h1>", uns
 st.divider()
 
 # --- Initialize session state --- 
-
-if "rcvd" not in st.session_state:
-    st.session_state["rcvd"] = RCVD
-
-if "fld" not in st.session_state:
-    st.session_state["fld"] = FLD
-
-if "ntfld" not in st.session_state:
-    st.session_state["ntfld"] = NTFLD
-
-if "disp" not in st.session_state:
-    st.session_state["disp"] = DISP
+initial_session_state()
 
 # --- Define callback functions --- 
 
-# # Define update_df() function
-# def update_df():
-
-#     filtered_df = concat_df.copy()
-
-#     if st.session_state["dir_selected_position"] != 'All':
-#         filtered_df = filtered_df[filtered_df['Position']==st.session_state["dir_selected_position"]].reset_index(drop=True)
-#     if st.session_state["dir_selected_unit"] != 'All':
-#         filtered_df = filtered_df[filtered_df['Assigned Unit'].apply(lambda x: st.session_state["dir_selected_unit"] in x)].reset_index(drop=True)
-#     if st.session_state["dir_selected_location"] != 'All': 
-#         filtered_df = filtered_df[filtered_df['Office Location']==st.session_state["dir_selected_location"]].reset_index(drop=True)
-#     if st.session_state["dir_selected_month"] != 'All':
-#         filtered_df = filtered_df[filtered_df['DOB Month']==int(st.session_state["dir_selected_month"])].reset_index(drop=True)
-#     if st.session_state["dir_searched_text"]: # Added searched_text to main clickback action 
-#         searched_text = st.session_state["dir_searched_text"].strip().lower()
-#         search_cols = ["Full Name", "First Name", "Middle Name", "Last Name", "Suffix", "Preferred Name"]
-#         filtered_df = filtered_df[
-#             filtered_df[search_cols].apply(lambda row: any(searched_text in str(value).lower() for value in row), axis=1)
-#         ].reset_index(drop=True)
-
-#     st.session_state["dir_filtered_df"] = filtered_df.reset_index(drop=True)
-
-# # Reset filters button
-# def reset_filters():
-#     st.session_state["dir_selected_position"] = "All"
-#     st.session_state["dir_selected_unit"] = "All"
-#     st.session_state["dir_selected_location"] = "All"
-#     st.session_state["dir_selected_month"] = "All"
-#     st.session_state["dir_searched_text"] = ""
-#     filtered_df = concat_df.copy()
-#     st.session_state["dir_filtered_df"] = filtered_df
-
 # --- Streamlit sidebar --- 
+
 with st.sidebar:
     st.title("Jackson County Prosecuting Attorney's Office")
     st.write("**JCPAO Dashboard Overview**")
-    st.write("Welcome to the JCPAO Dashboard! Please use the interactive widgets below to explore the dashboard:")
+    st.write("Welcome to the JCPAO Dashboard!") # Please use the interactive widgets below to explore the dashboard.")
     st.divider()
 
+    # filter_category, filter_police, filter_date_range, filter_def_race, filter_def_sex = initiate_widgets(True, "blue")
+
+    # st.write(st.session_state)
 
 
 # Total Rcvd / Fld / Ntfld / Disp YTD 
 
-def total_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, show_metric: bool = True):
+def total_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, delta_color: str = "normal", show_metric: bool = True):
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col])
@@ -121,7 +83,8 @@ def total_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: st
             label=metric_label,
             value=f"{sparkline_data[-1]} cases",
             delta=f"{delta} (YoY) | {delta_pct}", # ({last_total} YTD {current_year - 1})
-            # delta_color="off",
+            delta_color=delta_color,
+            height=185, 
             # width="content",
             chart_data=sparkline_data,
             chart_type=chart_type,
@@ -148,7 +111,7 @@ with ytd_metrics:
         total_ytd(FLD, "earliest_fld_date", "***Total Filed (YTD)***", "area")
 
     with ntfld_ytd:
-        total_ytd(NTFLD, "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area")
+        total_ytd(NTFLD, "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
     
     with disp_ytd:
         total_ytd(DISP, "earliest_disp_date", "***Total Disposed (YTD)***", "area")
@@ -219,7 +182,7 @@ with cases_by_year:
                 "fontSize": 24,
                 "fontWeight": "bold"
             }
-        )
+        ) # .interactive()
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -278,15 +241,30 @@ with cases_by_agency:
     # st.bar_chart(total_by_agency(RCVD, FLD, NTFLD, DISP), x="agency_name", y="Total Cases", color="Case Status", stack=False)
 
     order = ["Received", "Filed", "Not Filed", "Disposed"]
+    agency_df = total_by_agency(RCVD, FLD, NTFLD, DISP)
+
+    top_ten_agencies = (
+        agency_df.groupby("agency_name", as_index=False)["Total Cases"]
+        .sum()
+        .sort_values("Total Cases", ascending=False)
+        .head(10)
+    )
+
+    df_top10 = agency_df[agency_df["agency_name"].isin(top_ten_agencies["agency_name"])]
 
     chart = (
-        alt.Chart(total_by_agency(RCVD, FLD, NTFLD, DISP))
+        alt.Chart(df_top10)
         .mark_bar()
         .encode(
-            x=alt.X("agency_name:O", title="Police Agency"),
-            y=alt.Y("Total Cases:Q", title="Case Volume"),
+            y=alt.Y("agency_name:O", title="Police Agency", sort=top_ten_agencies["agency_name"].tolist()),
+            x=alt.X("Total Cases:Q", title="Case Volume"),
             color=alt.Color("Case Status:N", sort=order),  # 👈 enforce order
-            xOffset=alt.XOffset("Case Status:N", sort=order)
+            yOffset=alt.YOffset("Case Status:N", sort=order),
+            tooltip=[
+                alt.Tooltip("agency_name:N", title="Agency"),
+                alt.Tooltip("Case Status:N", title="Status"),
+                alt.Tooltip("Total Cases:Q", title="Total Cases")
+            ]
         )
         .properties(
             title={
@@ -300,7 +278,7 @@ with cases_by_agency:
 
     st.altair_chart(chart, use_container_width=True)
 
-    test_df = total_by_agency(RCVD, FLD, NTFLD, DISP)
+    test_df = agency_df
 
     # Sort by Year ascending, then Case Status descending
     sorted_df = test_df.sort_values(by=["Case Status", "Total Cases"], ascending=[True, False])
