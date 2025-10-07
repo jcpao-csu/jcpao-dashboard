@@ -18,6 +18,6 @@ with cols[1]:
         # load_asset("2025_01_14_dv_letter") 
         # pages/dv_pages/dv_letter_2025_01_14.pdf 
         # assets/pdfs/dv_letter_2025_01_14.pdf
-        pdf_path = Path("assets/pdfs/dv_letter_2025_01_14.pdf") 
+        pdf_path = Path("dv_letter_2025_01_14.pdf") # assets/pdfs/
         st.pdf(pdf_path, height="stretch")
 
