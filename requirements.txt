@@ -1,6 +1,8 @@
 streamlit==1.50.0
 streamlit[charts]
+streamlit[pdf]==1.0.7
 streamlit-bokeh==3.8.0
 psycopg[binary,pool]==3.2.10
 python-dotenv==1.1.1
 pandas==2.3.3
+cloudinary==1.44.1
