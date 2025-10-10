@@ -66,7 +66,7 @@ def import_codebook(file_path: str = "assets/data/MSHP_2025_08_19.csv") -> pd.Da
         encoding="utf-8"
     )
 
-    return df[[col_order]]
+    return df# [[col_order]]
 
 MSHP_CODEBOOK = import_codebook()
 
