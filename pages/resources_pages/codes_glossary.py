@@ -27,8 +27,8 @@ def update_df():
         df = df.loc[df["JCPAO Category"].isin(st.session_state["charge_category_filter"])].copy().reset_index(drop=True)
 
     # Filter by legacy charge code 
-    # if st.session_state["legacy_code_filter"]:
-    df = df.loc[df["Legacy Code"]].copy().reset_index(drop=True)
+    if st.session_state["legacy_code_filter"]: # If TRUE
+        df = df.loc[df["Legacy Code"]].copy().reset_index(drop=True)
 
     # Filter by charge severity
     if st.session_state["severity_filter"] != "All":
@@ -37,8 +37,8 @@ def update_df():
         else:
             df = df[df["Severity"]==st.session_state["severity_filter"]].reset_index(drop=True)
     
-        # Reassign to session state
-        st.session_state["codes_glossary"] = df
+    # Reassign to session state
+    st.session_state["codes_glossary"] = df
 
 # Reset filters button
 def reset_filters():
@@ -128,7 +128,7 @@ def initiate_widgets(disabled: bool = False, color: str = "violet"):
     ) # https://www.mshp.dps.missouri.gov/CJ08Client/Home/ChargeCode
 
     # Produce variables
-    return filter_category, filter_legacy, filter_sev
+    return filter_legacy, filter_category, filter_sev
 
 
 # --- st.sidebar ---
