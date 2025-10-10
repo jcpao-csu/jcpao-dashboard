@@ -30,6 +30,18 @@ def initialize_year(select_year: int):
 # --- Import MSHP Codebook ---
 
 def import_codebook(file_path: str = "assets/data/MSHP_2025_08_19.csv") -> pd.DataFrame:
+    col_order = [
+        "Charge Code",
+        "Statute",
+        "Severity",
+        "Classification",
+        "Offense Description (abridged)",
+        "NCIC Category Code",
+        "NCIC Category",
+        "JCPAO Category Code",
+        "JCPAO Category",
+        "Legacy Code",
+    ]
     df = pd.read_csv(
         Path(file_path),
         header=0,
@@ -50,22 +62,11 @@ def import_codebook(file_path: str = "assets/data/MSHP_2025_08_19.csv") -> pd.Da
             "JCPAO Category Code",
             "DV"
         ],
-        usecols=[
-            "Charge Code",
-            "Statute",
-            "Severity",
-            "Classification",
-            "Offense Description (abridged)",
-            "NCIC Category Code",
-            "NCIC Category",
-            "JCPAO Category Code",
-            "JCPAO Category",
-            "Legacy Code",
-        ],
+        usecols=col_order,
         encoding="utf-8"
     )
 
-    return df
+    return df[[col_order]]
 
 MSHP_CODEBOOK = import_codebook()
 
@@ -79,8 +80,8 @@ def initial_session_state():
     if "data" not in st.session_state:
         st.session_state["data"] = []
 
-    if "charge_category_filter" not in st.session_state:
-        st.session_state["charge_category_filter"] = []
+    # if "charge_category_filter" not in st.session_state:
+    #     st.session_state["charge_category_filter"] = []
 
     if "police_agency_filter" not in st.session_state:
         st.session_state["police_agency_filter"] = []
@@ -112,8 +113,8 @@ def pages_session_state():
     if "data" not in st.session_state:
         st.session_state["data"] = []
 
-    if "charge_category_filter" not in st.session_state:
-        st.session_state["charge_category_filter"] = []
+    # if "charge_category_filter" not in st.session_state:
+    #     st.session_state["charge_category_filter"] = []
 
     if "police_agency_filter" not in st.session_state:
         st.session_state["police_agency_filter"] = []

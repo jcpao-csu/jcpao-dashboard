@@ -27,8 +27,8 @@ def update_df():
         df = df.loc[df["JCPAO Category"].isin(st.session_state["charge_category_filter"])].copy().reset_index(drop=True)
 
     # Filter by legacy charge code 
-    if st.session_state["legacy_code_filter"]:
-        df = df.loc[df["Legacy Code"]].copy().reset_index(drop=True)
+    # if st.session_state["legacy_code_filter"]:
+    df = df.loc[df["Legacy Code"]].copy().reset_index(drop=True)
 
     # Filter by charge severity
     if st.session_state["severity_filter"] != "All":
@@ -50,6 +50,17 @@ def reset_filters():
 # Create widget filter
 def initiate_widgets(disabled: bool = False, color: str = "violet"):
 
+    # filter by active charge code 
+    filter_legacy = st.toggle(
+        f":{color}-background[:{color}[**Active Charge Codes Only**] 🚔]",
+        value=False,
+        key="legacy_code_filter",
+        help="Filter charge codes to only view ones that are currently active.",
+        on_change=update_df,
+        disabled=disabled,
+        width="stretch"
+    )
+
     # filter by charge category / offense type
     filter_category = st.multiselect(
         f":{color}-background[:{color}[**Charge Code Category ^**] 📖]",
@@ -64,17 +75,6 @@ def initiate_widgets(disabled: bool = False, color: str = "violet"):
         disabled=disabled,
         label_visibility="visible",
         accept_new_options=False,
-        width="stretch"
-    )
-
-    # filter by active charge code 
-    filter_legacy = st.toggle(
-        f":{color}-background[:{color}[**Active Charge Codes Only**] 🚔]",
-        value=False,
-        key="legacy_code_filter",
-        help="Filter charge codes to only view ones that are currently active.",
-        on_change=update_df,
-        disabled=disabled,
         width="stretch"
     )
 
