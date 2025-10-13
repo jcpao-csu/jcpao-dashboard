@@ -12,3 +12,6 @@ dashboard-venv/
 
 # Docs folder
 docs/
+
+# Ignore folder -- keep files that don't need to be pushed to Github
+ignore/
