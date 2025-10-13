@@ -1,0 +1,12 @@
+## About the Data
+
+The state of Missouri recognizes *stalking* as a special set of criminal offenses within the state criminal charge code ([see here](https://www.mshp.dps.missouri.gov/CJ08Client/Home/ChargeCode)).
+While not all incidents of domestic violence brought to and formally charged by the Office will necessarily include a stalking charge, these legally recognized state offenses provide tools for prosecuting attorneys to target domestic violence offenders and protect victims from further abuse.
+
+#### Stalking offenses:
+* Stalking, 1st degree ([565.225](https://revisor.mo.gov/main/OneSection.aspx?section=565.225) RSMo) - *purposely, through his or her conduct, disturbs or follows with the intent of disturbing another person and... ([read more](https://revisor.mo.gov/main/OneSection.aspx?section=565.225))*
+* Stalking, 2nd degree ([565.227](https://revisor.mo.gov/main/OneSection.aspx?section=565.227) RSMo) - *purposely, through his or her course of conduct, disturbs, or follows with the intent to disturb another person*
+
+#### Legal defintions: 
+
+* **Disturb** - *to engage in a course of conduct directed at a specific person that serves no legitimate purpose and that would cause a reasonable person under the circumstances to be frightened, intimidated, or emotionally distressed*

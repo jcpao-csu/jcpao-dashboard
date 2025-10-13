@@ -1,0 +1,12 @@
+## About the Data
+
+The state of Missouri recognizes *harassment* as a special set of criminal offenses within the state criminal charge code ([see here](https://www.mshp.dps.missouri.gov/CJ08Client/Home/ChargeCode)).
+While not all incidents of domestic violence brought to and formally charged by the Office will necessarily include a harassment charge, these legally recognized state offenses provide tools for prosecuting attorneys to target domestic violence offenders and protect victims from further abuse.
+
+#### Harassment offenses:
+
+* Harassment, 1st degree ([565.090](https://revisor.mo.gov/main/OneSection.aspx?section=565.090) RSMo) - *without good cause, engages in any act with the purpose to cause emotional distress to another person, and such act does cause such person to suffer emotional distress*
+* Harassment, 2nd degree ([565.091](https://revisor.mo.gov/main/OneSection.aspx?section=565.091) RSMo) - *without good cause, engages in any act with the purpose to cause emotional distress to another person*
+
+
+
