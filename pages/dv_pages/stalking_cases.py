@@ -414,7 +414,7 @@ def file_rate(rcvd: pd.DataFrame = RCVD, fld: pd.DataFrame = FLD, ntfld: pd.Data
 
     if total_cases > 0:
         file_rt = round((fld_cases / total_cases) * 100, 1)
-        st.markdown(f":yellow-background[Of the received cases that have completed review, :red[***{file_rt}%***] have been filed.]")
+        st.markdown(f":yellow-background[Of the cases that have been received and have completed review in {selected_year}, :red[***{file_rt}%***] have been filed.]")
     else:
         st.markdown(":yellow-background[None of the received cases have yet completed review.]")
 
