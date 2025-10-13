@@ -29,10 +29,10 @@ st.logo(jcpao_logo, size="large", link="https://www.jacksoncountyprosecutor.com"
 pages = {
     "Prosecuting Cases": [
         st.Page("pages/case_pages/main_view.py", title="Overview"),
-        st.Page("pages/case_pages/rcvd_cases.py", title="Received Cases"),
-        st.Page("pages/case_pages/fld_cases.py", title="Filed Cases"),
-        st.Page("pages/case_pages/ntfld_cases.py", title="Not Filed Cases"),
-        st.Page("pages/case_pages/disp_cases.py", title="Disposed Cases")
+        # st.Page("pages/case_pages/rcvd_cases.py", title="Received Cases"),
+        # st.Page("pages/case_pages/fld_cases.py", title="Filed Cases"),
+        # st.Page("pages/case_pages/ntfld_cases.py", title="Not Filed Cases"),
+        # st.Page("pages/case_pages/disp_cases.py", title="Disposed Cases")
     ],
     # "Violent Crime in KCMO": [
     #     st.Page("pages/violence_pages/shoot_review.py", title="Overview")
