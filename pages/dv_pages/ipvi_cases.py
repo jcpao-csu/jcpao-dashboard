@@ -393,6 +393,7 @@ def disp_outcomes(disp: pd.DataFrame = st.session_state["disp_df"], date_col: st
     disp[date_col] = pd.to_datetime(disp[date_col]) # Convert date col to datetime
     disp["year"] = disp[date_col].dt.year # .dt.to_period("Y") -- convert datetime column to 'period' object / a time interval, rather than a timestamp: 'Y' / 'M' / 'Q' / 'W' / 'D' / 'H'
     disp["month"] = disp[date_col].dt.month
+    disp["min_disp_category"] = disp["min_disp_rank"].map(disp_dict)
 
     # Define current period (YTD)
     today = pd.Timestamp.today()
@@ -402,12 +403,12 @@ def disp_outcomes(disp: pd.DataFrame = st.session_state["disp_df"], date_col: st
 
     # Group by category + year and count rows
     grouped_df = (
-        disp.groupby(["min_disp_rank", "year"])
+        disp.groupby(["min_disp_category", "year"])
         .size()
         .reset_index(name="count")
     )
 
-    grouped_df["min_disp_category"] = grouped_df["min_disp_rank"].map(disp_dict)
+    # grouped_df["min_disp_category"] = grouped_df["min_disp_rank"].map(disp_dict)
 
     # Add st.segmented_control
     years = sorted(grouped_df["year"].unique())
