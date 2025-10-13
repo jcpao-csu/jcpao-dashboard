@@ -34,14 +34,22 @@ def update_df():
     # IPVI Filter
     if st.session_state["ipvi_filter"] != "All": 
     
-        # IPVI Homicides - homicide
+        # IPV Homicides - homicide
         if st.session_state["ipvi_filter"] == "Homicide":
             rcvd_df = rcvd_df.loc[rcvd_df["homicide"].fillna(False)] # .copy().reset_index(drop=True)
 
-        # IPVI Property - property_damage / stealing / stolen_property / robbery / burglary / stealing vehicle
+        # IPV Property - property_damage / stealing / stolen_property / robbery / burglary / stealing vehicle
         elif st.session_state["ipvi_filter"] == "Property":
             property_cols = ["property_damage", "stealing", "stolen_property", "robbery", "burglary", "stealing_vehicle"]
             rcvd_df = rcvd_df.loc[rcvd_df[property_cols].any(axis=1)]
+
+        # IPV Harassment 
+        elif st.session_state["ipvi_filter"] == "Harassment":
+            rcvd_df = rcvd_df.loc[rcvd_df["harassment"].fillna(False)]
+
+        # IPV Stalking 
+        elif st.session_state["ipvi_filter"] == "Stalking":
+            rcvd_df = rcvd_df.loc[rcvd_df["stalking"].fillna(False)]
 
     filtered_cases = rcvd_df["pbk_num"].unique().tolist()
 
@@ -67,18 +75,20 @@ with st.sidebar:
 
     # Filter by IPVI case type: 
     ipvi_dict = {
-    "All": "All IPVI Cases",
-    "Homicide": "IPVI Homicides",
-    "Property": "IPVI Property"
+    "All": "All IPV Cases",
+    "Homicide": "Homicides",
+    "Property": "Property Crimes",
+    "Harassment": "Harassment",
+    "Stalking": "Stalking"
     }
 
     filter_ipvi = st.selectbox(
-        label=f":violet-background[:violet[**Filter by IPVI Crime Type**]]",
+        label=f":violet-background[:violet[**Filter by IPV Crime Type**]]",
         options=ipvi_dict.keys(),
         index=0,
         format_func=lambda x: ipvi_dict[x],
         key="ipvi_filter",
-        help="Select the crime type of the data you would like to examine through the IPVI dashboard.",
+        help="Select the crime type of the data you would like to examine through the IPV dashboard.",
         on_change=update_df,
         placeholder="Select crime type to filter",
         disabled=False,
@@ -94,7 +104,7 @@ with st.sidebar:
 
 st.markdown("<h1 style='text-align: center;'>Prosecuting Intimate Partner Violence Cases</h1>", unsafe_allow_html=True)
 
-with st.expander("Intimate Partner Violence (IPVI) Cases - Data Notes", expanded=False, icon="📝"):
+with st.expander("Intimate Partner Violence (IPV) Cases - Data Notes", expanded=False, icon="📝"):
     notes_text = Path("assets/text/dv_pages/ipvi.txt").read_text(encoding="utf-8")
     st.markdown(notes_text)
 
@@ -106,7 +116,7 @@ st.divider()
 def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, delta_color: str = "normal", show_metric: bool = True):
 
     # Filter DV for only those with DV assaults
-    df = df[df['ipvi']]
+    df = df[(df['ipvi']) & (pd.to_datetime(df[date_col]).dt.year >= 2020)]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col])
@@ -133,18 +143,36 @@ def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, 
 
     df = df[mask]
 
-    # Group by
-    annual_count = df.groupby("year")["pbk_num"].count().reset_index()
-    annual_count.rename(columns={"pbk_num": "total_cases"}, inplace=True)
+    # # Group by
+    # annual_count = df.groupby("year")["pbk_num"].count().reset_index()
+    # annual_count.rename(columns={"pbk_num": "total_cases"}, inplace=True)
 
-    # Sparkline 
+    # # Sparkline 
+    # sparkline_data = annual_count["total_cases"].tolist()
+
+    # # Delta
+    # # current_total = df_current_ytd["pbk_num"].nunique()
+    # # last_total = df_last_ytd["pbk_num"].nunique()
+    # # delta = current_total - last_total # sparkline_data[-1] - sparkline_data[-2] // year-to-year change)
+    # delta = sparkline_data[-1] - sparkline_data[-2]
+
+    # Group by year
+    annual_count = df.groupby("year")["pbk_num"].count()
+
+    # Reindex to include all years from min to current_year
+    # all_years = range(annual_count.index.min(), current_year + 1)
+    all_years = range(2020, current_year + 1)
+    annual_count = annual_count.reindex(all_years, fill_value=0)
+
+    # Convert to DataFrame
+    annual_count = annual_count.reset_index()
+    annual_count.columns = ["year", "total_cases"]
+
+    # Sparkline data
     sparkline_data = annual_count["total_cases"].tolist()
 
     # Delta
-    # current_total = df_current_ytd["pbk_num"].nunique()
-    # last_total = df_last_ytd["pbk_num"].nunique()
-    # delta = current_total - last_total # sparkline_data[-1] - sparkline_data[-2] // year-to-year change)
-    delta = sparkline_data[-1] - sparkline_data[-2]
+    delta = sparkline_data[-1] - sparkline_data[-2] if len(sparkline_data) >= 2 else 0
 
     # Calculate % difference
     if sparkline_data[-2] == 0:
@@ -167,9 +195,11 @@ def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, 
     # else:
     #     st.write(f"Compare with: *{last_total} ({current_year - 1} YTD)*")
 
+    return annual_count
+
 # YTD Metrics
 
-st.markdown("<h4 style='text-align: center;'>IPVI Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center;'>IPV Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
 st.write(" ")
 ytd_dv_metrics = st.container(horizontal=True)
 st.write(" ")
@@ -180,20 +210,23 @@ with ytd_dv_metrics:
 
     with rcvd_dv_ytd:
         # dv_ytd(RCVD, "ref_date", "***Total Received (YTD)***", "area")
-        dv_ytd(st.session_state["rcvd_df"], "ref_date", "***Total Received (YTD)***", "area")
+        rcvd_metric = dv_ytd(st.session_state["rcvd_df"], "ref_date", "***Total Received (YTD)***", "area")
+        # st.write(rcvd_metric)
     
     with fld_dv_ytd:
         # dv_ytd(FLD, "earliest_fld_date", "***Total Filed (YTD)***", "area")
-        dv_ytd(st.session_state["fld_df"], "earliest_fld_date", "***Total Filed (YTD)***", "area")
+        fld_metric = dv_ytd(st.session_state["fld_df"], "earliest_fld_date", "***Total Filed (YTD)***", "area")
+        # st.write(fld_metric)
 
     with ntfld_dv_ytd:
         # dv_ytd(NTFLD, "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
-        dv_ytd(st.session_state["ntfld_df"], "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
+        ntfld_metric = dv_ytd(st.session_state["ntfld_df"], "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
+        # st.write(ntfld_metric)
 
-    
     with disp_dv_ytd:
         # dv_ytd(DISP, "earliest_disp_date", "***Total Disposed (YTD)***", "area")
-        dv_ytd(st.session_state["disp_df"], "earliest_disp_date", "***Total Disposed (YTD)***", "area")
+        disp_metric = dv_ytd(st.session_state["disp_df"], "earliest_disp_date", "***Total Disposed (YTD)***", "area")
+        # st.write(disp_metric)
     
 
 def filter_dv(df: pd.DataFrame):
@@ -204,7 +237,7 @@ def filter_dv(df: pd.DataFrame):
 def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 
     # Filter DV for only those with DV assaults
-    df = df[df['ipvi']]
+    df = df[(df['ipvi']) & (pd.to_datetime(df[date_col]).dt.year >= 2020)]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col]) # Convert date col to datetime
@@ -302,7 +335,7 @@ def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 def ntfld_reasons(ntfld: pd.DataFrame = st.session_state["ntfld_df"], date_col: str = "earliest_ntfld_date"): # NTFLD
 
     # Filter DV for only those with DV assaults
-    ntfld = ntfld[ntfld['ipvi']]
+    ntfld = ntfld[(ntfld['ipvi']) & (pd.to_datetime(ntfld[date_col]).dt.year >= 2020)]
 
     # Prepare DF for groupby
     ntfld[date_col] = pd.to_datetime(ntfld[date_col]) # Convert date col to datetime
@@ -387,7 +420,7 @@ def disp_outcomes(disp: pd.DataFrame = st.session_state["disp_df"], date_col: st
     }
 
     # Filter DV for only those with DV assaults
-    disp = disp[disp['ipvi']]
+    disp = disp[(disp['ipvi']) & (pd.to_datetime(disp[date_col]).dt.year >= 2020)]
 
     # Prepare DF for groupby
     disp[date_col] = pd.to_datetime(disp[date_col]) # Convert date col to datetime
@@ -452,7 +485,7 @@ def disp_outcomes(disp: pd.DataFrame = st.session_state["disp_df"], date_col: st
 def file_rate(rcvd: pd.DataFrame = st.session_state["rcvd_df"], fld: pd.DataFrame = st.session_state["fld_df"], ntfld: pd.DataFrame = st.session_state["ntfld_df"], disp: pd.DataFrame = st.session_state["disp_df"], date_col: str = "ref_date"):
 
     # Filter DV for only those with DV assaults
-    rcvd = rcvd.loc[rcvd['ipvi'], ["pbk_num", "ref_date"]]
+    rcvd = rcvd.loc[(rcvd['ipvi']) & (pd.to_datetime(rcvd[date_col]).dt.year >= 2020), ["pbk_num", "ref_date"]]
     fld_list = fld["pbk_num"].unique().tolist()
     ntfld_list = ntfld["pbk_num"].unique().tolist()
     disp_list = disp["pbk_num"].unique().tolist()
@@ -536,7 +569,7 @@ def file_rate(rcvd: pd.DataFrame = st.session_state["rcvd_df"], fld: pd.DataFram
 def file_lead_charges(fld: pd.DataFrame = st.session_state["fld_df"], date_col: str = "earliest_fld_date"): # FLD
 
     # Filter DV for only those with DV assaults
-    fld = fld[fld['ipvi']]
+    fld = fld[(fld['ipvi']) & (pd.to_datetime(fld[date_col]).dt.year >= 2020)]
 
     # Prepare DF for groupby
     fld[date_col] = pd.to_datetime(fld[date_col]) # Convert date col to datetime
@@ -613,7 +646,7 @@ with cols[0]:
         disp_outcomes()
 
 with cols[1]:
-    st.subheader("IPVI Cases Rolling Total") # Cumulative Time Series
+    st.subheader("IPV Cases Rolling Total") # Cumulative Time Series
     tabs = st.tabs(["Received", "Filed", "Not Filed", "Disposed"])
     with tabs[0]:
         # dv_timeseries(RCVD, "ref_date", "Received")

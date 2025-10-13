@@ -38,11 +38,11 @@ pages = {
     #     st.Page("pages/violence_pages/shoot_review.py", title="Overview")
     # ],
     "Domestic Violence": [
-        st.Page("dv_main.py", title="Overview"), # pages/dv_pages/
-        st.Page("pages/dv_pages/ipvi_cases.py", title="Intimate Partner Violence"),
+        st.Page("pages/dv_pages/dv_main.py", title="Overview"), # pages/dv_pages/
+        st.Page("pages/dv_pages/ipvi_cases.py", title="Intimate Partner Violence (IPV)"),
         st.Page("pages/dv_pages/dv_cases.py", title="Domestic Assault Cases"),
-        st.Page("pages/dv_pages/harassment_cases.py", title="Harassment Cases"),
-        st.Page("pages/dv_pages/stalking_cases.py", title="Stalking Cases")
+        # st.Page("pages/dv_pages/harassment_cases.py", title="Harassment Cases"),
+        # st.Page("pages/dv_pages/stalking_cases.py", title="Stalking Cases")
     ],
     # "Other": [
     #     st.Page("pages/other_pages/blairs_law.py", title="Blair's Law"),
