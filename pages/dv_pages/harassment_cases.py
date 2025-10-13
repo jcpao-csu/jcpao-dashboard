@@ -7,10 +7,10 @@ from read_data import RCVD, FLD, NTFLD, DISP
 
 # --- Streamlit page title ---
 
-st.markdown("<h1 style='text-align: center;'>Prosecuting Domestic Assault Cases</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Prosecuting Harassment Cases</h1>", unsafe_allow_html=True)
 
-with st.expander("Domestic Assault Cases - Data Notes", expanded=False, icon="📝"):
-    notes_text = Path("assets/text/dv_pages/dv_assaults.txt").read_text(encoding="utf-8")
+with st.expander("Harassment Cases - Data Notes", expanded=False, icon="📝"):
+    notes_text = Path("assets/text/dv_pages/harassment.txt").read_text(encoding="utf-8")
     st.markdown(notes_text)
 
 st.divider()
@@ -21,7 +21,7 @@ st.divider()
 def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, delta_color: str = "normal", show_metric: bool = True):
 
     # Filter DV for only those with DV assaults
-    df = df[df['dv']]
+    df = df[df['harassment']]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col])
@@ -84,7 +84,7 @@ def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, 
 
 # YTD Metrics
 
-st.markdown("<h4 style='text-align: center;'>Domestic Assault Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center;'>Harassment Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
 st.write(" ")
 ytd_dv_metrics = st.container(horizontal=True)
 st.write(" ")
@@ -107,14 +107,14 @@ with ytd_dv_metrics:
     
 
 def filter_dv(df: pd.DataFrame):
-    df = df[df['dv']]
+    df = df[df['harassment']]
 
 # Grouped cumulative time series for processed cases over time 
 
 def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 
     # Filter DV for only those with DV assaults
-    df = df[df['dv']]
+    df = df[df['harassment']]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col]) # Convert date col to datetime
@@ -212,7 +212,7 @@ def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 def ntfld_reasons(ntfld: pd.DataFrame = NTFLD, date_col: str = "earliest_ntfld_date"):
 
     # Filter DV for only those with DV assaults
-    ntfld = ntfld[ntfld['dv']]
+    ntfld = ntfld[ntfld['harassment']]
 
     # Prepare DF for groupby
     ntfld[date_col] = pd.to_datetime(ntfld[date_col]) # Convert date col to datetime
@@ -297,7 +297,7 @@ def disp_outcomes(disp: pd.DataFrame = DISP, date_col: str = "earliest_disp_date
     }
 
     # Filter DV for only those with DV assaults
-    disp = disp[disp['dv']]
+    disp = disp[disp['harassment']]
 
     # Prepare DF for groupby
     disp[date_col] = pd.to_datetime(disp[date_col]) # Convert date col to datetime
@@ -361,7 +361,7 @@ def disp_outcomes(disp: pd.DataFrame = DISP, date_col: str = "earliest_disp_date
 def file_rate(rcvd: pd.DataFrame = RCVD, fld: pd.DataFrame = FLD, ntfld: pd.DataFrame = NTFLD, disp: pd.DataFrame = DISP, date_col: str = "ref_date"):
 
     # Filter DV for only those with DV assaults
-    rcvd = rcvd.loc[rcvd['dv'], ["pbk_num", "ref_date"]]
+    rcvd = rcvd.loc[rcvd['harassment'], ["pbk_num", "ref_date"]]
     fld_list = fld["pbk_num"].unique().tolist()
     ntfld_list = ntfld["pbk_num"].unique().tolist()
     disp_list = disp["pbk_num"].unique().tolist()
@@ -445,7 +445,7 @@ def file_rate(rcvd: pd.DataFrame = RCVD, fld: pd.DataFrame = FLD, ntfld: pd.Data
 def file_lead_charges(fld: pd.DataFrame = FLD, date_col: str = "earliest_fld_date"):
 
     # Filter DV for only those with DV assaults
-    fld = fld[fld['dv']]
+    fld = fld[fld['harassment']]
 
     # Prepare DF for groupby
     fld[date_col] = pd.to_datetime(fld[date_col]) # Convert date col to datetime
@@ -522,7 +522,7 @@ with cols[0]:
         disp_outcomes()
 
 with cols[1]:
-    st.subheader("Domestic Assault Cases Rolling Total") # Cumulative Time Series
+    st.subheader("Harassment Cases Rolling Total") # Cumulative Time Series
     tabs = st.tabs(["Received", "Filed", "Not Filed", "Disposed"])
     with tabs[0]:
         dv_timeseries(RCVD, "ref_date", "Received")

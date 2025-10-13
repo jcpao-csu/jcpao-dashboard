@@ -5,12 +5,97 @@ import altair as alt
 
 from read_data import RCVD, FLD, NTFLD, DISP
 
+# --- Initialize session state ---
+
+if "rcvd_df" not in st.session_state:
+    st.session_state["rcvd_df"] = RCVD
+
+if "fld_df" not in st.session_state:
+    st.session_state["fld_df"] = FLD
+
+if "ntfld_df" not in st.session_state:
+    st.session_state["ntfld_df"] = NTFLD
+
+if "disp_df" not in st.session_state:
+    st.session_state["disp_df"] = DISP
+
+# --- Callback functions ---
+
+def update_df():
+
+    # Initialize DFs
+    rcvd_df = RCVD.copy()
+    rcvd_df = rcvd_df.loc[rcvd_df["ipvi"]] # .copy().reset_index(drop=True)
+
+    fld_df = FLD.copy()
+    ntfld_df = NTFLD.copy()
+    disp_df = DISP.copy()
+    
+    # IPVI Filter
+    if st.session_state["ipvi_filter"] != "All": 
+    
+        # IPVI Homicides - homicide
+        if st.session_state["ipvi_filter"] == "Homicide":
+            rcvd_df = rcvd_df.loc[rcvd_df["homicide"].fillna(False)] # .copy().reset_index(drop=True)
+
+        # IPVI Property - property_damage / stealing / stolen_property / robbery / burglary / stealing vehicle
+        elif st.session_state["ipvi_filter"] == "Property":
+            property_cols = ["property_damage", "stealing", "stolen_property", "robbery", "burglary", "stealing_vehicle"]
+            rcvd_df = rcvd_df.loc[rcvd_df[property_cols].any(axis=1)]
+
+    filtered_cases = rcvd_df["pbk_num"].unique().tolist()
+
+    fld_df = fld_df.loc[fld_df["pbk_num"].isin(filtered_cases)]
+    ntfld_df = ntfld_df.loc[ntfld_df["pbk_num"].isin(filtered_cases)]
+    disp_df = disp_df.loc[disp_df["pbk_num"].isin(filtered_cases)]
+
+    # Update session state
+    st.session_state["rcvd_df"] = rcvd_df.reset_index(drop=True)
+    st.session_state["fld_df"] = fld_df.reset_index(drop=True)
+    st.session_state["ntfld_df"] = ntfld_df.reset_index(drop=True)
+    st.session_state["disp_df"] = disp_df.reset_index(drop=True)
+
+
+# --- Sidebar filter --- 
+
+with st.sidebar:
+
+    st.title("Jackson County Prosecuting Attorney's Office")
+    st.write("**Intimate Partner Violence**")
+    st.write("To further explore the JCPAO's efforts in prosecuting intimate partner violence, please use the interactive widgets below.")
+    st.divider()
+
+    # Filter by IPVI case type: 
+    ipvi_dict = {
+    "All": "All IPVI Cases",
+    "Homicide": "IPVI Homicides",
+    "Property": "IPVI Property"
+    }
+
+    filter_ipvi = st.selectbox(
+        label=f":violet-background[:violet[**Filter by IPVI Crime Type**]]",
+        options=ipvi_dict.keys(),
+        index=0,
+        format_func=lambda x: ipvi_dict[x],
+        key="ipvi_filter",
+        help="Select the crime type of the data you would like to examine through the IPVI dashboard.",
+        on_change=update_df,
+        placeholder="Select crime type to filter",
+        disabled=False,
+        label_visibility="visible",
+        accept_new_options=False,
+        width="stretch"
+    )
+
+    st.divider()
+
+
 # --- Streamlit page title ---
 
-st.markdown("<h1 style='text-align: center;'>Prosecuting Domestic Assault Cases</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Prosecuting Intimate Partner Violence Cases</h1>", unsafe_allow_html=True)
 
-with st.expander("Domestic Assault Cases - Data Notes", expanded=False, icon="📝"):
-    notes_text = Path("assets/text/dv_pages/dv_assaults.txt").read_text(encoding="utf-8")
+with st.expander("Intimate Partner Violence (IPVI) Cases - Data Notes", expanded=False, icon="📝"):
+    notes_text = Path("assets/text/dv_pages/ipvi.txt").read_text(encoding="utf-8")
     st.markdown(notes_text)
 
 st.divider()
@@ -21,7 +106,7 @@ st.divider()
 def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, delta_color: str = "normal", show_metric: bool = True):
 
     # Filter DV for only those with DV assaults
-    df = df[df['dv']]
+    df = df[df['ipvi']]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col])
@@ -84,7 +169,7 @@ def dv_ytd(df: pd.DataFrame, date_col: str, metric_label: str, chart_type: str, 
 
 # YTD Metrics
 
-st.markdown("<h4 style='text-align: center;'>Domestic Assault Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
+st.markdown("<h4 style='text-align: center;'>IPVI Cases Processed Year-to-Date</h4>", unsafe_allow_html=True)
 st.write(" ")
 ytd_dv_metrics = st.container(horizontal=True)
 st.write(" ")
@@ -94,27 +179,32 @@ with ytd_dv_metrics:
     rcvd_dv_ytd, fld_dv_ytd, ntfld_dv_ytd, disp_dv_ytd = st.columns(4)
 
     with rcvd_dv_ytd:
-        dv_ytd(RCVD, "ref_date", "***Total Received (YTD)***", "area")
+        # dv_ytd(RCVD, "ref_date", "***Total Received (YTD)***", "area")
+        dv_ytd(st.session_state["rcvd_df"], "ref_date", "***Total Received (YTD)***", "area")
     
     with fld_dv_ytd:
-        dv_ytd(FLD, "earliest_fld_date", "***Total Filed (YTD)***", "area")
+        # dv_ytd(FLD, "earliest_fld_date", "***Total Filed (YTD)***", "area")
+        dv_ytd(st.session_state["fld_df"], "earliest_fld_date", "***Total Filed (YTD)***", "area")
 
     with ntfld_dv_ytd:
-        dv_ytd(NTFLD, "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
+        # dv_ytd(NTFLD, "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
+        dv_ytd(st.session_state["ntfld_df"], "earliest_ntfld_date", "***Total Not Filed (YTD)***", "area", "inverse")
+
     
     with disp_dv_ytd:
-        dv_ytd(DISP, "earliest_disp_date", "***Total Disposed (YTD)***", "area")
+        # dv_ytd(DISP, "earliest_disp_date", "***Total Disposed (YTD)***", "area")
+        dv_ytd(st.session_state["disp_df"], "earliest_disp_date", "***Total Disposed (YTD)***", "area")
     
 
 def filter_dv(df: pd.DataFrame):
-    df = df[df['dv']]
+    df = df[df['ipvi']]
 
 # Grouped cumulative time series for processed cases over time 
 
 def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 
     # Filter DV for only those with DV assaults
-    df = df[df['dv']]
+    df = df[df['ipvi']]
 
     # Prepare DF for groupby
     df[date_col] = pd.to_datetime(df[date_col]) # Convert date col to datetime
@@ -209,10 +299,10 @@ def dv_timeseries(df: pd.DataFrame, date_col: str, title_name: str, ):
 
 # Not Filed Reasons
 
-def ntfld_reasons(ntfld: pd.DataFrame = NTFLD, date_col: str = "earliest_ntfld_date"):
+def ntfld_reasons(ntfld: pd.DataFrame = st.session_state["ntfld_df"], date_col: str = "earliest_ntfld_date"): # NTFLD
 
     # Filter DV for only those with DV assaults
-    ntfld = ntfld[ntfld['dv']]
+    ntfld = ntfld[ntfld['ipvi']]
 
     # Prepare DF for groupby
     ntfld[date_col] = pd.to_datetime(ntfld[date_col]) # Convert date col to datetime
@@ -278,7 +368,7 @@ def ntfld_reasons(ntfld: pd.DataFrame = NTFLD, date_col: str = "earliest_ntfld_d
 
 # Disposed Outcomes 
 
-def disp_outcomes(disp: pd.DataFrame = DISP, date_col: str = "earliest_disp_date"):
+def disp_outcomes(disp: pd.DataFrame = st.session_state["disp_df"], date_col: str = "earliest_disp_date"): # DISP
 
     # disp_dict
     disp_dict = {
@@ -297,7 +387,7 @@ def disp_outcomes(disp: pd.DataFrame = DISP, date_col: str = "earliest_disp_date
     }
 
     # Filter DV for only those with DV assaults
-    disp = disp[disp['dv']]
+    disp = disp[disp['ipvi']]
 
     # Prepare DF for groupby
     disp[date_col] = pd.to_datetime(disp[date_col]) # Convert date col to datetime
@@ -358,10 +448,10 @@ def disp_outcomes(disp: pd.DataFrame = DISP, date_col: str = "earliest_disp_date
 
 # File (%) Rate
 
-def file_rate(rcvd: pd.DataFrame = RCVD, fld: pd.DataFrame = FLD, ntfld: pd.DataFrame = NTFLD, disp: pd.DataFrame = DISP, date_col: str = "ref_date"):
+def file_rate(rcvd: pd.DataFrame = st.session_state["rcvd_df"], fld: pd.DataFrame = st.session_state["fld_df"], ntfld: pd.DataFrame = st.session_state["ntfld_df"], disp: pd.DataFrame = st.session_state["disp_df"], date_col: str = "ref_date"):
 
     # Filter DV for only those with DV assaults
-    rcvd = rcvd.loc[rcvd['dv'], ["pbk_num", "ref_date"]]
+    rcvd = rcvd.loc[rcvd['ipvi'], ["pbk_num", "ref_date"]]
     fld_list = fld["pbk_num"].unique().tolist()
     ntfld_list = ntfld["pbk_num"].unique().tolist()
     disp_list = disp["pbk_num"].unique().tolist()
@@ -442,10 +532,10 @@ def file_rate(rcvd: pd.DataFrame = RCVD, fld: pd.DataFrame = FLD, ntfld: pd.Data
     st.altair_chart(pie_chart, use_container_width=True)
 
 # File Lead Charges 
-def file_lead_charges(fld: pd.DataFrame = FLD, date_col: str = "earliest_fld_date"):
+def file_lead_charges(fld: pd.DataFrame = st.session_state["fld_df"], date_col: str = "earliest_fld_date"): # FLD
 
     # Filter DV for only those with DV assaults
-    fld = fld[fld['dv']]
+    fld = fld[fld['ipvi']]
 
     # Prepare DF for groupby
     fld[date_col] = pd.to_datetime(fld[date_col]) # Convert date col to datetime
@@ -522,16 +612,20 @@ with cols[0]:
         disp_outcomes()
 
 with cols[1]:
-    st.subheader("Domestic Assault Cases Rolling Total") # Cumulative Time Series
+    st.subheader("IPVI Cases Rolling Total") # Cumulative Time Series
     tabs = st.tabs(["Received", "Filed", "Not Filed", "Disposed"])
     with tabs[0]:
-        dv_timeseries(RCVD, "ref_date", "Received")
+        # dv_timeseries(RCVD, "ref_date", "Received")
+        dv_timeseries(st.session_state["rcvd_df"], "ref_date", "Received")
     with tabs[1]:
-        dv_timeseries(FLD, "earliest_fld_date", "Filed")
+        # dv_timeseries(FLD, "earliest_fld_date", "Filed")
+        dv_timeseries(st.session_state["fld_df"], "earliest_fld_date", "Filed")
     with tabs[2]:
-        dv_timeseries(NTFLD, "earliest_ntfld_date", "Not Filed")
+        # dv_timeseries(NTFLD, "earliest_ntfld_date", "Not Filed")
+        dv_timeseries(st.session_state["ntfld_df"], "earliest_ntfld_date", "Not Filed")
     with tabs[3]:
-        dv_timeseries(DISP, "earliest_disp_date", "Disposed")
+        # dv_timeseries(DISP, "earliest_disp_date", "Disposed")
+        dv_timeseries(st.session_state["disp_df"], "earliest_disp_date", "Disposed")
 
 
 # IPVI-tagged cases / IPVI property crimes / Harassment / Stalking / Homicides
