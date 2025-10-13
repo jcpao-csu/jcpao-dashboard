@@ -28,7 +28,7 @@ def update_df():
 
     # Filter by legacy charge code 
     if st.session_state["legacy_code_filter"]: # If TRUE
-        df = df.loc[df["Legacy Code"]].copy().reset_index(drop=True)
+        df = df.loc[~df["Legacy Code"]].copy().reset_index(drop=True)
 
     # Filter by charge severity
     if st.session_state["severity_filter"] != "All":
@@ -143,7 +143,7 @@ with st.sidebar:
 # --- Display DF ---
 
 df = st.dataframe(
-    data=st.session_state["codes_glossary"],
+    data=st.session_state["codes_glossary"], # call DF from st.session_state
     width="stretch",
     height=1000,
     hide_index=True,
