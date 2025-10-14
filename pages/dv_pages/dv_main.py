@@ -3,7 +3,7 @@ from pathlib import Path
 
 # from cloudinary_assets import load_asset
 
-st.markdown("<h1 style='text-align: center;'>Prosecuting Domestic Violence in Jackson County</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>:violet[Prosecuting Domestic Violence in Jackson County]</h1>", unsafe_allow_html=True)
 st.write(" ")
 
 cols = st.columns(2, vertical_alignment="top")
@@ -15,7 +15,7 @@ with cols[0]:
 
 with cols[1]:
 
-    press_conf_still = Path("assets/images/dv_pc_still.png")
+    press_conf_still = Path("assets/images/dv_pc/dv_pc_still4.png")
     st.image(
         press_conf_still,
         caption="Prosecuting Attorney Melesa Johnson giving remarks at the October 14, 2025 DV Press Conference",
@@ -39,6 +39,7 @@ with cols[1]:
             muted=False,
             width="stretch"
         )
+
     # st.pdf not working?
     # with st.expander("Read Prosecutor Johnson's January 2025 Letter [here](https://www.jacksoncountyprosecutor.com/DocumentCenter/View/2741/DV-Letter)", expanded=False, icon="📄"):
     #     letter_url = "https://www.jacksoncountyprosecutor.com/DocumentCenter/View/2741/DV-Letter"
