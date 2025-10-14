@@ -9,6 +9,12 @@ st.write(" ")
 cols = st.columns(2, vertical_alignment="top")
 
 with cols[0]:
+    press_conf_still = Path("assets/images/dv_pc_still.png")
+    st.image(
+        press_conf_still,
+        caption="Prosecuting Attorney Melesa Johnson giving remarks at the October 14, 2025 DV Press Conference",
+        width="stretch"
+    )
     intro_text = Path("assets/text/dv_pages/dv_intro.txt").read_text(encoding="utf-8")
     st.markdown(intro_text)
 
@@ -20,6 +26,15 @@ with cols[1]:
         st.image(
             letter_image,
             caption="Prosecuting Attorney Melesa Johnson's Letter from January 14, 2025",
+            width="stretch"
+        )
+
+    with st.expander("View Press Conference", expanded=False, icon="▶️"):
+        youtube_url = "https://youtu.be/6ajaqyQ0k1c"
+        st.video(
+            youtube_url,
+            autoplay=False,
+            muted=False,
             width="stretch"
         )
     # st.pdf not working?
