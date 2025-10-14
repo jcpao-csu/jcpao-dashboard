@@ -3,7 +3,7 @@ from pathlib import Path
 
 # from cloudinary_assets import load_asset
 
-st.markdown("<h1 style='text-align: center;'>:violet[Prosecuting Domestic Violence in Jackson County]</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Prosecuting Domestic Violence in Jackson County</h1>", unsafe_allow_html=True)
 st.write(" ")
 
 cols = st.columns(2, vertical_alignment="top")
